@@ -3,7 +3,7 @@ class CFG():
 
 def read_testcase(name): 
     tmp_case = []
-    f = open(f"c:/Users/Artyrie/Documents/Algorithm/Algorithms book1/lv1/sec2/{name}", 'r')
+    f = open(f"c:/Users/Artyrie/Documents/Algorithm/Algorithms book1/lv2/{name}", 'r')
     lines = f.readlines()
 
     for line in lines: 
