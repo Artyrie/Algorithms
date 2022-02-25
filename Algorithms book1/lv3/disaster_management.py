@@ -1,14 +1,16 @@
 import copy
 
+
 class CFG:
     MAX = 999
 
-def read_testcase(name): 
+
+def read_testcase(name):
     tmp_case = []
     f = open(f"c:/Users/Artyrie/Documents/Algorithm/Algorithms book1/lv3/{name}", 'r')
     lines = f.readlines()
 
-    for line in lines: 
+    for line in lines:
         tmp_line = list(map(str, line.split()))
         tmp_case.append(tmp_line)
 
@@ -16,7 +18,8 @@ def read_testcase(name):
 
     return tmp_case
 
-def data_organazation(file_name):
+
+def data_organization(file_name):
     testcase = read_testcase(file_name)
     meta_data = []
 
@@ -39,9 +42,11 @@ def data_organazation(file_name):
 
     return meta_data, map
 
+
 def print_map(map):
     for row in map:
         print(row)
+
 
 def find_time_location(map, meta_data, time):
     horizon = meta_data[1]
@@ -53,6 +58,7 @@ def find_time_location(map, meta_data, time):
                 time_pos.append((i, j))
     return time_pos
 
+
 def find_fire(map, meta_data):
     horizon = meta_data[1]
     vertical = meta_data[0]
@@ -62,6 +68,7 @@ def find_fire(map, meta_data):
             if (map[i][j] == CFG.MAX):
                 fire_pos.append((i, j))
     return fire_pos
+
 
 def fire_spreading(map, meta_data):
     horizon = meta_data[1]
@@ -77,6 +84,7 @@ def fire_spreading(map, meta_data):
             map[pos_h + 1][pos_v] = CFG.MAX
         if (pos_v + 1 < vertical):
             map[pos_h][pos_v + 1] = CFG.MAX
+
 
 def check_near_safety(map, move_map, copy_map, meta_data, pos_h, pos_v, time):
     horizon = meta_data[1]
@@ -102,6 +110,7 @@ def check_near_safety(map, move_map, copy_map, meta_data, pos_h, pos_v, time):
         move_map[pos_h][pos_v + 1] = 'R'
         return True
     return False
+
 
 def move(map, move_map, copy_map, meta_data, time):
     horizon = meta_data[1]
@@ -129,11 +138,13 @@ def move(map, move_map, copy_map, meta_data, time):
             copy_map[pos_h][pos_v + 1] = time + 1
     return False
 
+
 def make_move_map(meta_data):
     horizon = meta_data[1]
     vertical = meta_data[0]
     move_map = [[0 for _ in range(horizon)] for _ in range(vertical)]
     return move_map
+
 
 def next_route_pos(copy_map, meta_data, pos_h, pos_v, val):
     horizon = meta_data[1]
@@ -147,13 +158,14 @@ def next_route_pos(copy_map, meta_data, pos_h, pos_v, val):
     elif (pos_v + 1 < vertical and copy_map[pos_h][pos_v + 1] == val + 1):
         return (pos_h, pos_v + 1)
 
+
 def make_route(map, move_map, copy_map, meta_data, spend_time):
     pos_h, pos_v = find_time_location(map, meta_data, 1)[0]
     val = 0
-    
-    while(True):
+
+    while (True):
         if (val > 0):
-            print(move_map[pos_h][pos_v], end = "")
+            print(move_map[pos_h][pos_v], end="")
         val = copy_map[pos_h][pos_v]
 
         if (val > spend_time):
@@ -162,6 +174,7 @@ def make_route(map, move_map, copy_map, meta_data, spend_time):
         pos_h, pos_v = next_route_pos(copy_map, meta_data, pos_h, pos_v, val)
 
     return 0
+
 
 def find_route(file_name):
     meta_data, map = data_organazation(file_name)
@@ -176,10 +189,11 @@ def find_route(file_name):
         if (move(map, move_map, copy_map, meta_data, time)):
             spend_time = time
             break
-    
+
     print(spend_time)
     make_route(map, move_map, copy_map, meta_data, spend_time)
 
     return 0
+
 
 find_route("input1.txt")
