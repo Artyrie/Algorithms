@@ -1,7 +1,7 @@
 import copy
 
 
-# 8:16 ~
+# 8:16 ~ 12:01
 class CFG():
     DEBUG = False
     MAX_LOC = 200000
@@ -90,13 +90,13 @@ def solve(cn_list, br_loc, x2):
     return -1
     """
     opt = CFG.MAX_LOC
-    max_try = x2 * 2
+    max_try = x2 * 2 + 1
     ctr = 0
     ban_list = []
     running = copy.deepcopy(br_loc)
     process = ''
     i = 0
-    while ctr < max_try:
+    while True:
         if CFG.DEBUG:
             print(f"===== Debug {i} =====")
             i += 1
@@ -115,10 +115,10 @@ def solve(cn_list, br_loc, x2):
             ctr -= 1
         else:
             select = make_select(process, ban_list)
-            if select < 1 or ctr + 2 >= opt:
+            if select < 1 or ctr + 2 >= opt or ctr >= max_try:
                 ban_list.append(process)
                 if '' == ban_list[-1]:
-                    return opt
+                    return opt if opt < CFG.MAX_LOC else -1
                 running = brown_next(running, int(process[-1]), False)
                 process = process[:-1]
                 ctr -= 1
@@ -126,12 +126,6 @@ def solve(cn_list, br_loc, x2):
                 running = brown_next(running, select, True)
                 process += str(select)
                 ctr += 1
-    if CFG.DEBUG:
-        print("===== End =====")
-        print("process", process)
-        print("ban", ban_list)
-        print(f"opt : {opt}, max_try : {max_try}")
-    return -1
 
 
 def main():
