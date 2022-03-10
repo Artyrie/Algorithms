@@ -85,5 +85,3 @@ def solution6(participant, completion):
     # 100점 t5 0.66ms, 74.87ms
     answer = Counter(participant) - Counter(completion)
     return list(answer.keys())[0]
-
-
