@@ -74,6 +74,7 @@ def solution6(phone_book):
                     return False
     return True
 
+
 def solution7(phone_book):
     # 91.7점 t18 5.63ms
     tmp = sorted(phone_book, key=lambda val: len(val))
