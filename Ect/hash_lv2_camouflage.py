@@ -100,7 +100,7 @@ def solution5(clothes):
 
 
 def solution6(clothes):
-    # 100점, t27, max 0.05ms
+    # 100점, t28, max 0.05ms
     tmp = [v[1] for v in clothes]
     count_clothes = list(Counter(tmp).values())
     answer = 1
