@@ -1,7 +1,7 @@
 import math
 
 def solution(progresses, speeds):
-    # 100점 t11
+    # 100점, t11, max 0.04ms
     answer = []
     days = []
     for p, s in zip(progresses, speeds):
@@ -22,7 +22,7 @@ def solution(progresses, speeds):
 
 
 def solution(progresses, speeds):
-    # 100점 t11
+    # 100점, t11, max 0.04ms
     days = []
     for p, s in zip(progresses, speeds):
         tmp = math.ceil((100 - p) / s)

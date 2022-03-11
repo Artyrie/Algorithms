@@ -78,6 +78,7 @@ def solution2(genres, plays):
 
 
 def solution3(genres, plays):
+    # 100점 t15
     answer = []
     dic = {genre: [] for genre in set(genres)}
 
