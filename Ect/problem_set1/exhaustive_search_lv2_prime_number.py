@@ -7,16 +7,16 @@ def is_prime_number(num):
     if num < 2:
         return False
     else:
-        #for i in range(2, num): # 100점, t12, max 2162.95ms
-        #for i in range(2, math.ceil((math.sqrt(num)))): # 75점, t9 => 제곱수일 경우 range 범위에 root(n)이 제외됨
-        for i in range(2, int(math.sqrt(num)) + 1): # 100점, t12, max 5.47ms
+        # for i in range(2, num): # 100점, t12, max 2162.95ms
+        # for i in range(2, math.ceil((math.sqrt(num)))): # 75점, t9 => 제곱수일 경우 range 범위에 root(n)이 제외됨
+        for i in range(2, int(math.sqrt(num)) + 1):  # 100점, t12, max 5.47ms
             if num % i == 0:
                 return False
     return True
 
 
 def eratos(num):
-    # 100점, t12, max 5250.90ms
+    # 100점, t12, max 3.32ms
     result = [True] * (num + 1)
     result[0] = False
     result[1] = False
@@ -30,6 +30,9 @@ def eratos(num):
     return result
 
 
+prime = eratos(9999999)
+
+
 def solution(numbers):
     answer = 0
     pool = [numbers[i] for i in range(len(numbers))]
@@ -38,11 +41,10 @@ def solution(numbers):
         number.extend(list(map(''.join, itertools.permutations(pool, i))))
 
     number = list(set(map(int, number)))
-    #prime = eratos(int(len(numbers) * '9'))
 
     for val in number:
-        if is_prime_number(int(val)):
-        #if prime[val]:
+        # if is_prime_number(int(val)):
+        if prime[val]:
             answer += 1
     return answer
 
