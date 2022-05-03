@@ -92,15 +92,10 @@ def solution2(n, info):
 def make_tree(tree, info, n, inf_idx=0, idx=1, score = 0):
     if n == 0:
         return 0
-    elif inf_idx == len(info):
-        return 0
     else:
         if inf_idx <= len(info) - 2:
             if info[inf_idx] + 1 <= n:
-                if info[inf_idx] == 0:
-                    shot_score = score + len(info) - 1 - inf_idx
-                else:
-                    shot_score = score + (len(info) - 1 - inf_idx) * 2
+                shot_score = score + len(info) - 1 - inf_idx if info[inf_idx] == 0 else score + (len(info) - 1 - inf_idx) * 2
                 tree[idx * 2] = (info[inf_idx] + 1, shot_score)
                 tree[idx * 2 + 1] = (0, score)
                 return make_tree(tree, info, n - info[inf_idx] - 1, inf_idx + 1, idx * 2, shot_score)\
@@ -209,4 +204,46 @@ def solution4(n, info):
     return list(map(int, list(sorted(answer, key=lambda x: (x[0], -x[1]))[0][2])))
 
 
-print(solution4(10, [0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 3]))
+def solution5(n, info): # sol4 정리
+    # t25, max 2.32ms
+    tree = [(0, 0) for _ in range(4097)]
+    score = 0
+
+    for v, s in zip(info, range(10, -1, -1)):
+        score += s if v > 0 else 0
+
+    make_tree(tree, info, n, score=-score)
+    score_list = sorted(set(tree), key=lambda x: (-x[1], -x[0]))
+
+    # 동점 비교
+    max_score_list = []
+    max_score = score_list[0][1]
+    for s in score_list:
+        if s[1] == max_score:
+            max_score_list.append(s)
+        else:
+            break
+
+    # 이길 수 없는 경우
+    if max_score_list[0][1] == 0:
+        return [-1]
+
+    idx_list = []
+    for ms in max_score_list:
+        start_idx = 0
+        while True:
+            try:
+                idx_list.append(tree.index(ms, start_idx))
+                start_idx = idx_list[-1] + 1
+            except:
+                break
+
+    answer = []
+    for c_idx in idx_list:
+        tmp = ''
+        last = tree[c_idx][0]
+        while c_idx > 1:
+            tmp += str(tree[c_idx][0])
+            c_idx = c_idx // 2
+        answer.append((11 - len(tmp), last, tmp.zfill(11)[::-1]))
+    return list(map(int, list(sorted(answer, key=lambda x: (x[0], -x[1]))[0][2])))
