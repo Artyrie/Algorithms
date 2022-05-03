@@ -61,7 +61,6 @@ def solution3(board, skill):
 
     dmg_brd = np.zeros((row, col), dtype='int32')
     for s in skill:
-
         degree = -s[5] if s[0] == 1 else s[5]
         r1, c1 = s[1], s[2]
         r2, c2 = s[3], s[4]
