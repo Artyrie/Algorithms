@@ -1,6 +1,8 @@
 import copy
+import numpy as np
 from collections import deque
 from itertools import combinations
+from itertools import permutations
 
 
 def find_route(src, dest, edges):
@@ -37,26 +39,17 @@ def solution1(info, edges):
         if val == 0:
             sheep.append(i)
 
-    print(sheep)
     path_dict = {s: find_route(0, s, edges) for s in sheep}
-    print(path_dict)
 
     visited = []
     cnt = 0
     while True:
-        print("======")
-        print(f"sheep : {sheep}")
-        print(f"visited : {visited}")
-        print(f"answer : {answer}")
-
         dest = sheep.popleft()
-        print("dest:", dest)
         # 가야 할 경로 파악
         route = []
         for p in path_dict[dest]:
             if p not in visited:
                 route.append(p)
-        print(route)
 
         reachable, ratio = cal_sheep(route, info, answer)
         if reachable:
@@ -97,31 +90,21 @@ def solution2(info, edges):
         if val == 0:
             sheep.append(i)
 
-    print(sheep)
     path_dict = {s: find_route(0, s, edges) for s in sheep}
-    print(path_dict)
+
     visited = []
     check = 0
     while check >= 0:
-        print("======")
-        print(f"dict : {path_dict}")
-        print(f"visited : {visited}")
-        print(f"answer : {answer}")
-
         dest_list = sheep_efn(sheep, visited, path_dict)
-        print(dest_list)
 
         for dest in dest_list:
-            print("------ ------")
-            print("dest:", dest)
             # 가야 할 경로 파악
             route = []
             for p in path_dict[dest[0]]:
                 if p not in visited:
                     route.append(p)
-            print(f"route : {route}")
+
             reachable, ratio = cal_sheep(route, info, answer)
-            print(f"reachable : {reachable}")
             if reachable:
                 answer = ratio
                 if not route:
@@ -169,24 +152,15 @@ def solution3(info, edges):
         if val == 0:
             sheep.append(i)
 
-    print(sheep)
     path_dict = {s: find_route(0, s, edges) for s in sheep}
-    print(path_dict)
     visited = []
     check = 0
     while check >= 0:
-        print("======")
-        print(f"dict : {path_dict}")
-        print(f"visited : {visited}")
-        print(f"answer : {answer}")
-
         dest_list = sorted(sheep_efn2(sheep, visited, path_dict).items(), reverse=True)
-        print(f"dest_list : {dest_list}")
 
         # 우선 순위 파악
         for _, dest in dest_list:
             check2 = 0
-            print("------ ------")
             # 같은 효율이 여러 개면, 공통된 루트가 많은 것을 찾음
             if len(dest) > 1:
                 combination = list(combinations(dest, 2))
@@ -201,7 +175,6 @@ def solution3(info, edges):
                     if set(tmp) == set(dest):
                         dest = tmp
                         break
-            print("dest:", dest)
 
             # 가야 할 경로 파악
             for d in dest:
@@ -209,9 +182,8 @@ def solution3(info, edges):
                 for p in path_dict[d]:
                     if p not in visited:
                         route.append(p)
-                print(f"route : {route}")
+
                 reachable, ratio = cal_sheep(route, info, answer)
-                print(f"reachable : {reachable}")
                 if reachable:
                     answer = ratio
                     if not route:
@@ -251,9 +223,7 @@ def solution4(info, edges):
         if val == 0:
             sheep.append(i)
 
-    print(sheep)
     path_dict = {s: find_route(0, s, edges) for s in sheep}
-    print(path_dict)
 
     # 노드 사용 빈도
     tmp_dict = {}
@@ -263,29 +233,21 @@ def solution4(info, edges):
                 tmp_dict[v] += 1
             except:
                 tmp_dict[v] = 1
-    print(tmp_dict)
+
     # 루트 공통 사용률
     efn_dict = {s: 0 for s in sheep}
     for key in sheep:
         for v in path_dict[key]:
             efn_dict[key] += tmp_dict[v]
-    print(efn_dict)
 
     visited = []
     check = 0
     while check >= 0:
-        print("======")
-        print(f"dict : {path_dict}")
-        print(f"visited : {visited}")
-        print(f"answer : {answer}")
-
         dest_list = sorted(sheep_efn2(sheep, visited, path_dict).items(), reverse=True)
-        print(f"dest_list : {dest_list}")
 
         # 우선 순위 파악
         for _, dest in dest_list:
             check2 = 0
-            print("------ ------")
             # 같은 효율이 여러 개면, 공통된 루트가 많은 것을 찾음
             if len(dest) > 1:
                 combination = list(combinations(get_not_visited_sheep(visited, sheep), 2))
@@ -306,7 +268,6 @@ def solution4(info, edges):
                     if set(tmp) == set(dest):
                         dest = tmp
                         break
-            print("dest:", dest)
 
             # 가야 할 경로 파악
             for d in dest:
@@ -314,9 +275,8 @@ def solution4(info, edges):
                 for p in path_dict[d]:
                     if p not in visited:
                         route.append(p)
-                print(f"route : {route}")
+
                 reachable, ratio = cal_sheep(route, info, answer)
-                print(f"reachable : {reachable}")
                 if reachable:
                     answer = ratio
                     if not route:
@@ -339,8 +299,56 @@ def solution4(info, edges):
     return answer[0]
 
 
-val = solution4([0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0],
-                [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 8], [6, 9],
-                 [7, 10], [9, 11], [10, 12], [11, 13]])
-print("===== ======")
-print(val)
+def solution5(info, edges):
+    # t18, max 2768.86ms
+    sheep = []  # 양 위치 기록
+    for i, val in zip(range(len(info)), info):
+        if val == 0:
+            sheep.append(i)
+
+    path_dict = {s: find_route(0, s, edges) for s in sheep}  # 양으로 가는 경로 파악
+
+    sheep_only = []  # 양만 있는 경우
+    for key, val in path_dict.items():
+        if not set(val) - set(sheep):
+            sheep_only.append(key)
+
+    # 늑대를 포함한 양 경로 순열
+    left = list(set(sheep) - set(sheep_only))
+    perm_list = list(permutations(left, len(left)))
+
+    max_score = len(sheep_only)
+    while perm_list:
+        perm = perm_list.pop()
+        visited = copy.deepcopy(sheep_only)
+        sheep_count = np.array([len(sheep_only), 0])
+        # 순열에 따라 방문
+        for p in perm:
+            route = path_dict[p]
+            tmp_count = copy.deepcopy(sheep_count)
+            reachable = tmp_count[0] - tmp_count[1]
+            # 루트 체크
+            for r in route:
+                print(reachable)
+                if r in visited:
+                    continue
+                else:
+                    visited.append(r)
+                    if info[r] == 0:
+                        tmp_count[0] += 1
+                        reachable += 1
+                    else:
+                        tmp_count[1] += 1
+                        reachable -= 1
+                    if reachable < 1:
+                        break
+
+            # 경로 도달 가능성 확인
+            if reachable < 1:
+                break
+            else:
+                sheep_count = tmp_count
+        # 최고 점수 갱신 확인
+        if max_score < sheep_count[0]:
+            max_score = int(sheep_count[0])
+    return max_score
